@@ -8,38 +8,82 @@
 import Foundation
 import UIKit
 import AVFoundation
+import IQKeyboardManagerSwift
 
-public class AppsOnAirServices : NSObject {
+public class AppsOnAirServices {
+    public static let shared = AppsOnAirServices()
+    
     private var appId: String = ""
     private var window: UIWindow?
     
-    public func setAppId(_ appId: String,_ showNativeUI: Bool = false) -> (Void) {
+    /// set navigationbar color (hex value eg: 000000)
+    var navBarColor: String?
+    
+    /// set navigationbar title text
+    var navBarTitle: String?
+    
+    /// set navigationbar title color (hex value eg: 000000)
+    var navBarTitleTextColor: String?
+    
+    /// Set background color (hex value eg: 000000)
+    var backgroundColor: String?
+    
+    /// set labelTicket text
+    var labelTextColor: String?
+    
+    /// set inputfields hint text color
+    var inputHintTextColor: String?
+    
+    /// set description field char limit (default 255)
+    var txtDescriptionCharLimit: Int?
+    
+    /// set description hint text
+    var txtDescriptionHintText: String?
+    
+    /// set email hint text
+    var txtEmailHintText: String?
+    
+    /// set btnSubmit text
+    var btnSubmitText: String?
+    
+    /// set btnSubmit text color
+    var btnSubmitTextColor: String?
+    
+    /// set btnSubmit background color
+    var btnSubmitBackgroundColor: String?
+    
+    
+    public func setAppId(_ appId: String) -> (Void) {
         self.appId = appId;
-        if(showNativeUI) {
-            AppUpdateRequest.fetchAppUpdate(self.appId) { (appUpdateData) in
-                let items = appUpdateData.count;
-                if (items > 0) {
-                    let bundle = Bundle(for: type(of: self))
-                    let storyboard = UIStoryboard(name: "AppUpdate", bundle: bundle)
-                    let modalVc = storyboard.instantiateViewController(withIdentifier: "MaintenanceViewController") as! MaintenanceViewController
-                    modalVc.updateDataDictionary = appUpdateData
-                    DispatchQueue.main.sync {
-                        let navController = UINavigationController(rootViewController: modalVc)
-                        navController.modalPresentationStyle = .overCurrentContext
-                        let topController = UIApplication.topMostViewController()
-                        topController?.present(navController, animated: true) {
-                            // This code snippet is for fixing one UI accessbility related bug for our other cross platform plugin
-                            NotificationCenter.default.post(name: NSNotification.Name("visibilityChanges"), object: nil, userInfo: ["isPresented": true])
-                        }
-                    }
-                }
-            }
-        }
+     
     }
     
-    public func checkForAppUpdate(_ completion : @escaping (NSDictionary) -> ()) {
-        AppUpdateRequest.fetchAppUpdate(self.appId) { (appUpdateData) in
-            completion(appUpdateData)
-        }
+    /// setup feedback screen 
+    public func setupFeedbackScreen(backgroundColor: String? = nil, navBarColor: String? = nil,navBarTitle: String? = nil, navBarTitleTextColor: String? = nil,  labelTextColor: String? = nil, inputHintTextColor: String? = nil, descriptionCharLimit: Int? = nil,txtEmailHintText: String? = nil,txtDescriptionHintText: String? = nil,  btnSubmitText: String? = nil, btnSubmitTextColor: String? = nil, btnSubmitBackgroundColor: String? = nil) {
+    
+        self.navBarColor = navBarColor
+        self.navBarTitle = navBarTitle
+        self.navBarTitleTextColor = navBarTitleTextColor
+        
+        self.backgroundColor = backgroundColor
+        
+        self.labelTextColor = labelTextColor
+        self.inputHintTextColor = inputHintTextColor
+        
+        self.txtDescriptionCharLimit = descriptionCharLimit
+        
+        self.txtDescriptionHintText = txtDescriptionHintText
+        
+        self.txtEmailHintText = txtEmailHintText
+        
+        self.btnSubmitText = btnSubmitText
+        self.btnSubmitTextColor = btnSubmitTextColor
+        self.btnSubmitBackgroundColor = btnSubmitBackgroundColor
+        
+        _ = UIViewController.classInit
+        IQKeyboardManager.shared.enable = true
+        
+        
     }
+    
 }
