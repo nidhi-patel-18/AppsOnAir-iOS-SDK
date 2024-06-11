@@ -26,11 +26,11 @@ extension UIViewController {
         }
         
         method_exchangeImplementations(originalMethod, swizzledMethod)
+        print("cancel selected =====> \(ZLEditImageViewController(image:UIImage()).cancelBtn.isSelected)")
     }()
     
     @objc func swizzled_viewDidLoad() {
         self.swizzled_viewDidLoad()
-        print("cancel selected =====> \(ZLEditImageViewController(image:UIImage()).cancelBtn.isSelected)")
         setupMotionDetection()
     }
     
