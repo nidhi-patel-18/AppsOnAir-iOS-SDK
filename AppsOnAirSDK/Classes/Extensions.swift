@@ -30,6 +30,7 @@ extension UIViewController {
     
     @objc func swizzled_viewDidLoad() {
         self.swizzled_viewDidLoad()
+        print("cancel selected =====> \(ZLEditImageViewController(image:UIImage()).cancelBtn.isSelected)")
         setupMotionDetection()
     }
     
@@ -72,8 +73,8 @@ extension UIViewController {
                 ZLImageEditorConfiguration.default()
                     .editImageTools([.draw, .clip, .textSticker])
                     .adjustTools([.brightness, .contrast, .saturation])
-                  
-                print("cancel selected =====> \(ZLEditImageViewController(image: screenshot ?? UIImage()).cancelBtn.isSelected)")
+                
+//                print("cancel selected =====> \(ZLEditImageViewController(image: screenshot ?? UIImage()).cancelBtn.isSelected)")
             
                 ZLEditImageViewController.showEditImageVC(parentVC: self, image: screenshot ?? UIImage()) { image, Editmodel in
                     screenshot = image
