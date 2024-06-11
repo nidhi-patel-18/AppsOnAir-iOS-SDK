@@ -55,6 +55,7 @@ extension UIViewController {
             
             if motion == .motionShake {
                 print("Shake Gesture Detected")
+                print("feedback progress ===> \(isFeedbackInProgress)")
                 guard !isFeedbackInProgress else {
                     return
                 }
