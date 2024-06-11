@@ -68,11 +68,13 @@ extension UIViewController {
                     screenshot = captureImage
                 }
                 
-                
-               ZLImageEditorConfiguration.default()
+           
+                ZLImageEditorConfiguration.default()
                     .editImageTools([.draw, .clip, .textSticker])
                     .adjustTools([.brightness, .contrast, .saturation])
-                
+                  
+                print("cancel selected =====> \(ZLEditImageViewController(image: screenshot ?? UIImage()).cancelBtn.isSelected)")
+            
                 ZLEditImageViewController.showEditImageVC(parentVC: self, image: screenshot ?? UIImage()) { image, Editmodel in
                     screenshot = image
                     
