@@ -14,6 +14,7 @@ import ZLImageEditor
 // MARK: - EXTENSION UIViewController
 typealias ToastCompletionHandler = (_ success:Bool) -> Void
 var isFeedbackInProgress = false
+var screenshot: UIImage?
 extension UIViewController {
     
     static let classInit: Void = {
@@ -26,7 +27,7 @@ extension UIViewController {
         }
         
         method_exchangeImplementations(originalMethod, swizzledMethod)
-        print("cancel selected =====> \(ZLEditImageViewController(image:UIImage()).cancelBtn.isSelected)")
+        
     }()
     
     @objc func swizzled_viewDidLoad() {
@@ -49,10 +50,13 @@ extension UIViewController {
         motionManager.startAccelerometerUpdates()
     
     }
+    open override func motionBegan(_ motion: UIEvent.EventSubtype, with event: UIEvent?) {
+        print("cancel selected =====> \(ZLEditImageViewController(image:screenshot ?? UIImage()).cancelBtn.isSelected)")
+    }
     
     open override func motionEnded(_ motion: UIEvent.EventSubtype, with event: UIEvent?) {
        
-            var screenshot: UIImage?
+            
             
             if motion == .motionShake {
                 print("Shake Gesture Detected")
