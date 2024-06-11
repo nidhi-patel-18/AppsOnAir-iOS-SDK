@@ -50,10 +50,7 @@ extension UIViewController {
         motionManager.startAccelerometerUpdates()
     
     }
-    open override func motionBegan(_ motion: UIEvent.EventSubtype, with event: UIEvent?) {
-        print("cancel selected =====> \(ZLEditImageViewController(image:screenshot ?? UIImage()).cancelBtn.isSelected)")
-    }
-    
+   
     open override func motionEnded(_ motion: UIEvent.EventSubtype, with event: UIEvent?) {
        
             
@@ -64,7 +61,8 @@ extension UIViewController {
                 guard !isFeedbackInProgress else {
                     return
                 }
-                
+                print("cancel selected =====> \( ZLEditImageViewController(image:screenshot ?? UIImage()).cancelBtn)")
+               
                 isFeedbackInProgress = true
                 
                 if let captureImage = UIApplication.shared.windows.first?.takeScreenshot() {
