@@ -18,7 +18,6 @@ class ViewController: UIViewController {
         // Please replace your APP_ID from https://appsonair.com
         // appUpdateManager.setAppId(APP_ID: "XXXXX-XXXX-XXXX-XXXX-XXXXXXXX", showNativeUI: true/false)
         //appUpdateManager.setAppId("XXXXX-XXXX-XXXX-XXXX-XXXXXXXX")
-        print("Helloooooooo")
         AppsOnAirServices.shared.setAppId("XXXXX-XXXX-XXXX-XXXX-XXXXXXXX")
         AppsOnAirServices.shared.setupFeedbackScreen(backgroundColor: "c3a5ff",txtEmailHintText: "your email", btnSubmitText: "Save")
         //AppsOnAirServices.shared.setupFeedbackScreen()

@@ -64,6 +64,7 @@ extension UIViewController {
         
     }()
     
+  
     @objc func swizzled_viewDidLoad() {
         self.swizzled_viewDidLoad()
         setupMotionDetection()
@@ -92,7 +93,7 @@ extension UIViewController {
             if motion == .motionShake {
                 print("Shake Gesture Detected")
                 print("feedback progress ===> \(isFeedbackInProgress)")
-                print("loaded 0====> \(self.isViewLoaded)")
+                print("loaded 0====> \(self.isMovingToParent)")
                 guard !isFeedbackInProgress else {
                     return
                 }
