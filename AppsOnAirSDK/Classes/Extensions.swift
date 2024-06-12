@@ -93,12 +93,11 @@ extension UIViewController {
             if motion == .motionShake {
                 print("Shake Gesture Detected")
                 print("feedback progress ===> \(isFeedbackInProgress)")
-                print("loaded 0====> \(self.isEditing)")
+
                 guard !isFeedbackInProgress else {
                     return
                 }
                 isFeedbackInProgress = true
-                print("loaded 1====> \(self.isViewLoaded)")
                 
                 if let captureImage = UIApplication.shared.windows.first?.takeScreenshot() {
                     // Do something with the screenshot, like saving it to the photo library
@@ -106,7 +105,9 @@ extension UIViewController {
                     screenshot = captureImage
                 }
                 
+                let editVc = ZLEditImageViewController(image: screenshot ?? UIImage())
                 
+                print("edit view loaded ===> \(editVc.isViewLoaded)")
                
                 
            
@@ -152,7 +153,6 @@ extension UIViewController {
                     
                     self.presentScreenFromTop(Vc ?? UIViewController())
                     isFeedbackInProgress = false
-                    print("loaded 3====> \(self.isViewLoaded)")
                     print("end feedback progress ===> \(isFeedbackInProgress)")
                 }
             }
@@ -163,7 +163,6 @@ extension UIViewController {
     
         DispatchQueue.main.async { [weak self] in
             self?.present(viewController, animated: animated, completion: completion)
-            print("loaded 2====> \(String(describing: self?.isViewLoaded))")
         }
     }
     
