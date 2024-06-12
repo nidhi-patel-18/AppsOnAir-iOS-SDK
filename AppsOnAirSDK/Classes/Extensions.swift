@@ -109,46 +109,48 @@ extension UIViewController {
                     .editImageTools([.draw, .clip, .textSticker])
                     .adjustTools([.brightness, .contrast, .saturation])
           
-                print("feedback progress 1 ===> \(isFeedbackInProgress)")
+                
 
             
-//                ZLEditImageViewController.showEditImageVC(parentVC: self, image: screenshot ?? UIImage()) { image, Editmodel in
-//                    screenshot = image
-//                    isFeedbackInProgress = false
-//                    // let bundle = Bundle(for: type(of: self))
-//                    let bundle = Bundle(identifier: "org.cocoapods.AppsOnAir")
-//                    let storyboard = UIStoryboard(name: "Feedback", bundle: bundle)
-//                    let Vc = storyboard.instantiateViewController(withIdentifier: "FeedbackController") as? FeedbackController
-//                    
-//                    Vc?.selectedImage = [screenshot ?? UIImage()]
-//                    
-//                    Vc?.navBarColor = AppsOnAirServices.shared.navBarColor
-//                    Vc?.navBarTitle = AppsOnAirServices.shared.navBarTitle
-//                    Vc?.navBarTitleTextColor = AppsOnAirServices.shared.navBarTitleTextColor
-//                    
-//                    Vc?.backgroundColor = AppsOnAirServices.shared.backgroundColor
-//                    
-//                    Vc?.labelTextColor = AppsOnAirServices.shared.labelTextColor
-//                    Vc?.inputHintTextColor = AppsOnAirServices.shared.inputHintTextColor
-//                    Vc?.backgroundColor = AppsOnAirServices.shared.backgroundColor
-//                    
-//                    Vc?.labelTextColor = AppsOnAirServices.shared.labelTextColor
-//                    Vc?.inputHintTextColor = AppsOnAirServices.shared.inputHintTextColor
-//                    
-//                    
-//                    Vc?.txtDescriptionCharLimit = AppsOnAirServices.shared.txtDescriptionCharLimit ?? 255
-//                    Vc?.txtDescriptionHintText = AppsOnAirServices.shared.txtDescriptionHintText
-//                    
-//                    Vc?.txtEmailHintText = AppsOnAirServices.shared.txtEmailHintText
-//                    
-//                    Vc?.btnSubmitText = AppsOnAirServices.shared.btnSubmitText
-//                    Vc?.btnSubmitTextColor = AppsOnAirServices.shared.btnSubmitTextColor
-//                    Vc?.btnSubmitBackgroundColor = AppsOnAirServices.shared.btnSubmitBackgroundColor
-//                    
-//                    
-//                    self.presentScreenFromTop(Vc ?? UIViewController())
-//                    print("end feedback progress ===> \(isFeedbackInProgress)")
-//                }
+                ZLEditImageViewController.showEditImageVC(parentVC: self, image: screenshot ?? UIImage()) { image, Editmodel in
+                    print("feedback progress 1===> \(isFeedbackInProgress)")
+                    isFeedbackInProgress = false
+                    screenshot = image
+                    print("feedback progress 2===> \(isFeedbackInProgress)")
+                    // let bundle = Bundle(for: type(of: self))
+                    let bundle = Bundle(identifier: "org.cocoapods.AppsOnAir")
+                    let storyboard = UIStoryboard(name: "Feedback", bundle: bundle)
+                    let Vc = storyboard.instantiateViewController(withIdentifier: "FeedbackController") as? FeedbackController
+                    print("feedback progress 3===> \(isFeedbackInProgress)")
+                    Vc?.selectedImage = [screenshot ?? UIImage()]
+                    
+                    Vc?.navBarColor = AppsOnAirServices.shared.navBarColor
+                    Vc?.navBarTitle = AppsOnAirServices.shared.navBarTitle
+                    Vc?.navBarTitleTextColor = AppsOnAirServices.shared.navBarTitleTextColor
+                    print("feedback progress 4===> \(isFeedbackInProgress)")
+                    Vc?.backgroundColor = AppsOnAirServices.shared.backgroundColor
+                    
+                    Vc?.labelTextColor = AppsOnAirServices.shared.labelTextColor
+                    Vc?.inputHintTextColor = AppsOnAirServices.shared.inputHintTextColor
+                    Vc?.backgroundColor = AppsOnAirServices.shared.backgroundColor
+                    print("feedback progress 5===> \(isFeedbackInProgress)")
+                    Vc?.labelTextColor = AppsOnAirServices.shared.labelTextColor
+                    Vc?.inputHintTextColor = AppsOnAirServices.shared.inputHintTextColor
+                    
+                    print("feedback progress 6===> \(isFeedbackInProgress)")
+                    Vc?.txtDescriptionCharLimit = AppsOnAirServices.shared.txtDescriptionCharLimit ?? 255
+                    Vc?.txtDescriptionHintText = AppsOnAirServices.shared.txtDescriptionHintText
+                    
+                    Vc?.txtEmailHintText = AppsOnAirServices.shared.txtEmailHintText
+                    print("feedback progress 8===> \(isFeedbackInProgress)")
+                    Vc?.btnSubmitText = AppsOnAirServices.shared.btnSubmitText
+                    Vc?.btnSubmitTextColor = AppsOnAirServices.shared.btnSubmitTextColor
+                    Vc?.btnSubmitBackgroundColor = AppsOnAirServices.shared.btnSubmitBackgroundColor
+                    
+                    print("feedback progress 9===> \(isFeedbackInProgress)")
+                    self.presentScreenFromTop(Vc ?? UIViewController())
+                    print("end feedback progress ===> \(isFeedbackInProgress)")
+                }
             }
     }
     
