@@ -94,9 +94,9 @@ extension UIViewController {
                 print("Shake Gesture Detected")
                 print("feedback progress ===> \(isFeedbackInProgress)")
 
-                guard !isFeedbackInProgress else {
-                    return
-                }
+//                guard !isFeedbackInProgress else {
+//                    return
+//                }
                 isFeedbackInProgress = true
                 
                 if let captureImage = UIApplication.shared.windows.first?.takeScreenshot() {
