@@ -52,17 +52,18 @@ extension UIViewController {
     }
    
     open override func motionEnded(_ motion: UIEvent.EventSubtype, with event: UIEvent?) {
-       
             
+
             
             if motion == .motionShake {
                 print("Shake Gesture Detected")
                 print("feedback progress ===> \(isFeedbackInProgress)")
+                print("screenshot ===> \(String(describing: screenshot))")
                 guard !isFeedbackInProgress else {
                     return
                 }
                 print("cancel selected =====> \( ZLEditImageViewController(image:screenshot ?? UIImage()).cancelBtn)")
-               
+
                 isFeedbackInProgress = true
                 
                 if let captureImage = UIApplication.shared.windows.first?.takeScreenshot() {
@@ -77,7 +78,7 @@ extension UIViewController {
                     .adjustTools([.brightness, .contrast, .saturation])
                 
 //                print("cancel selected =====> \(ZLEditImageViewController(image: screenshot ?? UIImage()).cancelBtn.isSelected)")
-            
+                
                 ZLEditImageViewController.showEditImageVC(parentVC: self, image: screenshot ?? UIImage()) { image, Editmodel in
                     screenshot = image
                     
@@ -110,7 +111,7 @@ extension UIViewController {
                     Vc?.btnSubmitText = AppsOnAirServices.shared.btnSubmitText
                     Vc?.btnSubmitTextColor = AppsOnAirServices.shared.btnSubmitTextColor
                     Vc?.btnSubmitBackgroundColor = AppsOnAirServices.shared.btnSubmitBackgroundColor
-                    
+
                     
                     self.presentScreenFromTop(Vc ?? UIViewController())
                     isFeedbackInProgress = false
