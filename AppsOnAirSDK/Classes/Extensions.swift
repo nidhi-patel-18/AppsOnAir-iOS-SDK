@@ -15,12 +15,35 @@ import ZLImageEditor
 typealias ToastCompletionHandler = (_ success:Bool) -> Void
 var isFeedbackInProgress = false
 var screenshot: UIImage?
+
+
+class CustomZLEditImageViewController: ZLEditImageViewController {
+
+    var isEditingStarted = false
+    var onCancel: (() -> Void)?
+
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        if !isEditingStarted {
+            onCancel?()
+        }
+    }
+
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        self.editFinishBlock = { [weak self] image, editModel in
+            self?.isEditingStarted = true
+        }
+    }
+}
+
+
 extension UIViewController {
     
     static let classInit: Void = {
         let originalSelector = #selector(UIViewController.viewDidLoad)
         let swizzledSelector = #selector(UIViewController.swizzled_viewDidLoad)
-        print("init calling")
+
         guard let originalMethod = class_getInstanceMethod(UIViewController.self, originalSelector),
               let swizzledMethod = class_getInstanceMethod(UIViewController.self, swizzledSelector) else {
             return
@@ -32,21 +55,18 @@ extension UIViewController {
     
     @objc func swizzled_viewDidLoad() {
         self.swizzled_viewDidLoad()
-        print("swizzled_viewDidLoad")
         setupMotionDetection()
     }
     
     @objc func swizzled_dealloc() {
            // Clean up resources here if needed
            self.swizzled_dealloc()
-        print("swizzled_dealloc")
        }
     
     func setupMotionDetection() {
         // Set the view controller to become the first responder
         _ = self.view // Ensure the view is loaded
         self.becomeFirstResponder()
-        print("setup motion detection")
         // Add motion detection
         let motionManager = CMMotionManager()
         motionManager.startAccelerometerUpdates()
@@ -55,16 +75,14 @@ extension UIViewController {
    
     open override func motionEnded(_ motion: UIEvent.EventSubtype, with event: UIEvent?) {
             
-
-            
             if motion == .motionShake {
                 print("Shake Gesture Detected")
                 print("feedback progress ===> \(isFeedbackInProgress)")
-                print("screenshot ===> \(String(describing: screenshot))")
-//                guard !isFeedbackInProgress else {
-//                    return
-//                }
-//                print("cancel selected =====> \( ZLEditImageViewController(image:screenshot ?? UIImage()).cancelBtn)")
+
+               guard !isFeedbackInProgress else {
+                   return
+               }
+
 
                 isFeedbackInProgress = true
                 
@@ -78,56 +96,74 @@ extension UIViewController {
                     .editImageTools([.draw, .clip, .textSticker])
                     .adjustTools([.brightness, .contrast, .saturation])
                 
-                
-                ZLEditImageViewController.showEditImageVC(parentVC: self, image: screenshot ?? UIImage()) { image, Editmodel in
+                let editorVC = CustomZLEditImageViewController(image: screenshot ?? UIImage())
+                editorVC.editFinishBlock = { [weak self] image, editModel in
                     screenshot = image
                     print("show edit image ")
-                    // let bundle = Bundle(for: type(of: self))
-                    let bundle = Bundle(identifier: "org.cocoapods.AppsOnAir")
-                    let storyboard = UIStoryboard(name: "Feedback", bundle: bundle)
-                    let Vc = storyboard.instantiateViewController(withIdentifier: "FeedbackController") as? FeedbackController
-                    
-                    Vc?.selectedImage = [screenshot ?? UIImage()]
-                    
-                    Vc?.navBarColor = AppsOnAirServices.shared.navBarColor
-                    Vc?.navBarTitle = AppsOnAirServices.shared.navBarTitle
-                    Vc?.navBarTitleTextColor = AppsOnAirServices.shared.navBarTitleTextColor
-                    
-                    Vc?.backgroundColor = AppsOnAirServices.shared.backgroundColor
-                    
-                    Vc?.labelTextColor = AppsOnAirServices.shared.labelTextColor
-                    Vc?.inputHintTextColor = AppsOnAirServices.shared.inputHintTextColor
-                    Vc?.backgroundColor = AppsOnAirServices.shared.backgroundColor
-                    
-                    Vc?.labelTextColor = AppsOnAirServices.shared.labelTextColor
-                    Vc?.inputHintTextColor = AppsOnAirServices.shared.inputHintTextColor
-                    
-                    
-                    Vc?.txtDescriptionCharLimit = AppsOnAirServices.shared.txtDescriptionCharLimit ?? 255
-                    Vc?.txtDescriptionHintText = AppsOnAirServices.shared.txtDescriptionHintText
-                    
-                    Vc?.txtEmailHintText = AppsOnAirServices.shared.txtEmailHintText
-                    
-                    Vc?.btnSubmitText = AppsOnAirServices.shared.btnSubmitText
-                    Vc?.btnSubmitTextColor = AppsOnAirServices.shared.btnSubmitTextColor
-                    Vc?.btnSubmitBackgroundColor = AppsOnAirServices.shared.btnSubmitBackgroundColor
-
-                    
-                    self.presentScreenFromTop(Vc ?? UIViewController())
+                    self?.presentFeedbackController()
+//                                self?.presentFeedbackController()
                     isFeedbackInProgress = false
-                    print("end feedback progress ===> \(isFeedbackInProgress)")
                 }
+
+                editorVC.onCancel = { [weak self] in
+                    print("Edit image canceled")
+                    isFeedbackInProgress = false
+                }
+
+                self.present(editorVC, animated: true, completion: nil)
+                        
+//                ZLEditImageViewController.showEditImageVC(parentVC: self, image: screenshot ?? UIImage()) { image, Editmodel in
+//                    screenshot = image
+//                    print("show edit image ")
+//                    // let bundle = Bundle(for: type(of: self))
+//                    
+//                    isFeedbackInProgress = false
+//
+//                }
                 
                 
             }
     }
+    
+    
+    func presentFeedbackController(){
+        let bundle = Bundle(identifier: "org.cocoapods.AppsOnAir")
+        let storyboard = UIStoryboard(name: "Feedback", bundle: bundle)
+        let Vc = storyboard.instantiateViewController(withIdentifier: "FeedbackController") as? FeedbackController
+        
+        Vc?.selectedImage = [screenshot ?? UIImage()]
+        
+        Vc?.navBarColor = AppsOnAirServices.shared.navBarColor
+        Vc?.navBarTitle = AppsOnAirServices.shared.navBarTitle
+        Vc?.navBarTitleTextColor = AppsOnAirServices.shared.navBarTitleTextColor
+        
+        Vc?.backgroundColor = AppsOnAirServices.shared.backgroundColor
+        
+        Vc?.labelTextColor = AppsOnAirServices.shared.labelTextColor
+        Vc?.inputHintTextColor = AppsOnAirServices.shared.inputHintTextColor
+        Vc?.backgroundColor = AppsOnAirServices.shared.backgroundColor
+        
+        Vc?.labelTextColor = AppsOnAirServices.shared.labelTextColor
+        Vc?.inputHintTextColor = AppsOnAirServices.shared.inputHintTextColor
+        
+        
+        Vc?.txtDescriptionCharLimit = AppsOnAirServices.shared.txtDescriptionCharLimit ?? 255
+        Vc?.txtDescriptionHintText = AppsOnAirServices.shared.txtDescriptionHintText
+        
+        Vc?.txtEmailHintText = AppsOnAirServices.shared.txtEmailHintText
+        
+        Vc?.btnSubmitText = AppsOnAirServices.shared.btnSubmitText
+        Vc?.btnSubmitTextColor = AppsOnAirServices.shared.btnSubmitTextColor
+        Vc?.btnSubmitBackgroundColor = AppsOnAirServices.shared.btnSubmitBackgroundColor
+        self.presentScreenFromTop(Vc ?? UIViewController())
+    }
+    
     
     func presentScreenFromTop(_ viewController: UIViewController, animated: Bool = true, completion: (() -> Void)? = nil) {
         viewController.modalPresentationStyle = .overFullScreen // or .overCurrentContext
     
         DispatchQueue.main.async { [weak self] in
             self?.present(viewController, animated: animated, completion: completion)
-            print("presentScreenFromTop")
         }
     }
     
@@ -136,7 +172,6 @@ extension UIViewController {
         self.view.makeToast(message,duration: duration)
         DispatchQueue.main.asyncAfter(deadline: .now(), execute: {
             completion(true)
-            print("showToast")
         })
         
     }
