@@ -23,10 +23,31 @@ struct ZLImageEditorLayout {
 
 
 
+
 // MARK: - EXTENSION UIViewController
 typealias ToastCompletionHandler = (_ success:Bool) -> Void
 var isFeedbackInProgress = false
 var screenshot: UIImage?
+
+
+
+//class CustomZLEditImageViewController: ZLEditImageViewController {
+//
+//    override var cancelBtn: ZLEnlargeButton {
+//        let btn = ZLEnlargeButton(type: .custom)
+//        btn.titleLabel?.font = ZLImageEditorLayout.bottomToolTitleFont
+//        btn.setTitleColor(.white, for: .normal)
+//        btn.setTitle("cancel", for: .normal)
+//        btn.addTarget(self, action: #selector(cancelButtonClick), for: .touchUpInside)
+//        btn.enlargeInset = 30
+//        return btn
+//    }
+//    
+//    @objc func cancelButtonClick() {
+//        isFeedbackInProgress = false
+//        dismiss(animated: true, completion: nil)
+//    }
+//}
 
 extension UIViewController {
     
@@ -71,10 +92,11 @@ extension UIViewController {
             if motion == .motionShake {
                 print("Shake Gesture Detected")
                 print("feedback progress ===> \(isFeedbackInProgress)")
-                guard isFeedbackInProgress else {
-                   return isFeedbackInProgress = false
+                guard !isFeedbackInProgress else {
+                    return
                 }
                 isFeedbackInProgress = true
+                print("loaded 1====> \(self.isViewLoaded)")
                 
                 if let captureImage = UIApplication.shared.windows.first?.takeScreenshot() {
                     // Do something with the screenshot, like saving it to the photo library
@@ -90,7 +112,7 @@ extension UIViewController {
                     .editImageTools([.draw, .clip, .textSticker])
                     .adjustTools([.brightness, .contrast, .saturation])
           
-           
+        
             
                 ZLEditImageViewController.showEditImageVC(parentVC: self, image: screenshot ?? UIImage()) { image, Editmodel in
                     screenshot = image
@@ -128,6 +150,7 @@ extension UIViewController {
                     
                     self.presentScreenFromTop(Vc ?? UIViewController())
                     isFeedbackInProgress = false
+                    print("loaded 3====> \(self.isViewLoaded)")
                     print("end feedback progress ===> \(isFeedbackInProgress)")
                 }
             }
@@ -138,6 +161,7 @@ extension UIViewController {
     
         DispatchQueue.main.async { [weak self] in
             self?.present(viewController, animated: animated, completion: completion)
+            print("loaded 2====> \(String(describing: self?.isViewLoaded))")
         }
     }
     
