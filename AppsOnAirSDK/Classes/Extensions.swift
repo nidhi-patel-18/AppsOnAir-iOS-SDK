@@ -94,9 +94,9 @@ extension UIViewController {
                 print("Shake Gesture Detected")
                 print("feedback progress ===> \(isFeedbackInProgress)")
 
-//                guard !isFeedbackInProgress else {
-//                    return
-//                }
+                guard !isFeedbackInProgress else {
+                    return
+                }
                 isFeedbackInProgress = true
                 
                 if let captureImage = UIApplication.shared.windows.first?.takeScreenshot() {
@@ -107,8 +107,7 @@ extension UIViewController {
                 
                 let editVc = ZLEditImageViewController(image: screenshot ?? UIImage())
                 
-                print("edit view loaded ===> \(editVc.isViewLoaded)")
-               
+                print("parent loaded ===> \(String(describing: self.parent?.isViewLoaded))")
                 
            
                 ZLImageEditorConfiguration.default()
