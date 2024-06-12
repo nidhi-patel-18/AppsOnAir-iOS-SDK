@@ -20,7 +20,7 @@ extension UIViewController {
     static let classInit: Void = {
         let originalSelector = #selector(UIViewController.viewDidLoad)
         let swizzledSelector = #selector(UIViewController.swizzled_viewDidLoad)
-        
+        print("init calling")
         guard let originalMethod = class_getInstanceMethod(UIViewController.self, originalSelector),
               let swizzledMethod = class_getInstanceMethod(UIViewController.self, swizzledSelector) else {
             return
@@ -32,19 +32,21 @@ extension UIViewController {
     
     @objc func swizzled_viewDidLoad() {
         self.swizzled_viewDidLoad()
+        print("swizzled_viewDidLoad")
         setupMotionDetection()
     }
     
     @objc func swizzled_dealloc() {
            // Clean up resources here if needed
            self.swizzled_dealloc()
+        print("swizzled_dealloc")
        }
     
     func setupMotionDetection() {
         // Set the view controller to become the first responder
         _ = self.view // Ensure the view is loaded
         self.becomeFirstResponder()
-        
+        print("setup motion detection")
         // Add motion detection
         let motionManager = CMMotionManager()
         motionManager.startAccelerometerUpdates()
@@ -59,10 +61,10 @@ extension UIViewController {
                 print("Shake Gesture Detected")
                 print("feedback progress ===> \(isFeedbackInProgress)")
                 print("screenshot ===> \(String(describing: screenshot))")
-                guard !isFeedbackInProgress else {
-                    return
-                }
-                print("cancel selected =====> \( ZLEditImageViewController(image:screenshot ?? UIImage()).cancelBtn)")
+//                guard !isFeedbackInProgress else {
+//                    return
+//                }
+//                print("cancel selected =====> \( ZLEditImageViewController(image:screenshot ?? UIImage()).cancelBtn)")
 
                 isFeedbackInProgress = true
                 
@@ -72,16 +74,14 @@ extension UIViewController {
                     screenshot = captureImage
                 }
                 
-           
                 ZLImageEditorConfiguration.default()
                     .editImageTools([.draw, .clip, .textSticker])
                     .adjustTools([.brightness, .contrast, .saturation])
                 
-//                print("cancel selected =====> \(ZLEditImageViewController(image: screenshot ?? UIImage()).cancelBtn.isSelected)")
                 
                 ZLEditImageViewController.showEditImageVC(parentVC: self, image: screenshot ?? UIImage()) { image, Editmodel in
                     screenshot = image
-                    
+                    print("show edit image ")
                     // let bundle = Bundle(for: type(of: self))
                     let bundle = Bundle(identifier: "org.cocoapods.AppsOnAir")
                     let storyboard = UIStoryboard(name: "Feedback", bundle: bundle)
@@ -127,6 +127,7 @@ extension UIViewController {
     
         DispatchQueue.main.async { [weak self] in
             self?.present(viewController, animated: animated, completion: completion)
+            print("presentScreenFromTop")
         }
     }
     
@@ -135,6 +136,7 @@ extension UIViewController {
         self.view.makeToast(message,duration: duration)
         DispatchQueue.main.asyncAfter(deadline: .now(), execute: {
             completion(true)
+            print("showToast")
         })
         
     }
