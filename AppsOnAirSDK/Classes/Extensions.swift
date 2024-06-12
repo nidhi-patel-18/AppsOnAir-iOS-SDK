@@ -163,6 +163,7 @@ extension UIViewController {
         viewController.modalPresentationStyle = .overFullScreen // or .overCurrentContext
     
         DispatchQueue.main.async { [weak self] in
+            print("feedback appear")
             self?.present(viewController, animated: animated, completion: completion)
         }
     }
