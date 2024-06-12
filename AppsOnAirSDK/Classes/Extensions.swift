@@ -71,10 +71,10 @@ extension UIViewController {
             if motion == .motionShake {
                 print("Shake Gesture Detected")
                 print("feedback progress ===> \(isFeedbackInProgress)")
-                guard !isFeedbackInProgress else {                    
-                   return isFeedbackInProgress = true
+                guard isFeedbackInProgress else {
+                   return isFeedbackInProgress = false
                 }
-                
+                isFeedbackInProgress = true
                 
                 if let captureImage = UIApplication.shared.windows.first?.takeScreenshot() {
                     // Do something with the screenshot, like saving it to the photo library
