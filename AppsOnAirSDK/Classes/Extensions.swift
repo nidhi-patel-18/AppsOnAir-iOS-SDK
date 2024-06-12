@@ -106,9 +106,6 @@ extension UIViewController {
                 }
                 
                 let editVc = ZLEditImageViewController(image: screenshot ?? UIImage())
-                
-                print("parent loaded ===> \(String(describing: self.parent?.isViewLoaded))")
-                
            
                 ZLImageEditorConfiguration.default()
                     .editImageTools([.draw, .clip, .textSticker])
@@ -118,7 +115,7 @@ extension UIViewController {
             
                 ZLEditImageViewController.showEditImageVC(parentVC: self, image: screenshot ?? UIImage()) { image, Editmodel in
                     screenshot = image
-                    
+                    isFeedbackInProgress = false
                     // let bundle = Bundle(for: type(of: self))
                     let bundle = Bundle(identifier: "org.cocoapods.AppsOnAir")
                     let storyboard = UIStoryboard(name: "Feedback", bundle: bundle)
@@ -151,7 +148,6 @@ extension UIViewController {
                     
                     
                     self.presentScreenFromTop(Vc ?? UIViewController())
-                    isFeedbackInProgress = false
                     print("end feedback progress ===> \(isFeedbackInProgress)")
                 }
             }
