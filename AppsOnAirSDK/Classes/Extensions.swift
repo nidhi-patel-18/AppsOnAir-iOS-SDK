@@ -13,18 +13,6 @@ import ZLImageEditor
 
 
 
-//Image Editor layout handling
-struct ZLImageEditorLayout {
-    static let bottomToolBtnH: CGFloat = 34
-    
-    static let bottomToolTitleFont = UIFont.systemFont(ofSize: 17)
-    
-    static let bottomToolBtnCornerRadius: CGFloat = 5
-}
-
-
-
-
 // MARK: - EXTENSION UIViewController
 typealias ToastCompletionHandler = (_ success:Bool) -> Void
 typealias feedbackCompleteionHandler = (_ success:Bool) -> Void
@@ -69,12 +57,6 @@ extension UIViewController {
         motionManager.startAccelerometerUpdates()
         
     }
-    open override func canPerformAction(_ action: Selector, withSender sender: Any?) -> Bool {
-            if action == Selector(("_undo:")) || action == Selector(("_redo:")) {
-                return false
-            }
-            return super.canPerformAction(action, withSender: sender)
-        }
  
     open override func motionEnded(_ motion: UIEvent.EventSubtype, with event: UIEvent?) {
         
@@ -216,6 +198,21 @@ extension UIViewController {
     }
     
 }
+
+
+
+
+
+//MARK: - Image Editor layout
+struct ZLImageEditorLayout {
+    static let bottomToolBtnH: CGFloat = 34
+    
+    static let bottomToolTitleFont = UIFont.systemFont(ofSize: 17)
+    
+    static let bottomToolBtnCornerRadius: CGFloat = 5
+}
+
+
 
 
 // MARK: - EXTENSION UIView
