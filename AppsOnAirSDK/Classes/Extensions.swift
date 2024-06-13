@@ -69,6 +69,12 @@ extension UIViewController {
         motionManager.startAccelerometerUpdates()
         
     }
+    open override func canPerformAction(_ action: Selector, withSender sender: Any?) -> Bool {
+            if action == Selector(("_undo:")) || action == Selector(("_redo:")) {
+                return false
+            }
+            return super.canPerformAction(action, withSender: sender)
+        }
  
     open override func motionEnded(_ motion: UIEvent.EventSubtype, with event: UIEvent?) {
         
@@ -93,7 +99,7 @@ extension UIViewController {
     }
     
     
-    //open image editor on shake gaeture
+    //open image editor on shake gesture
     func openImageEditor(){
         if let captureImage = UIApplication.shared.windows.first?.takeScreenshot() {
             // Do something with the screenshot, like saving it to the photo library
@@ -139,7 +145,7 @@ extension UIViewController {
 //            isFeedbackInProgress = false
         }
         
-        
+        //handling image editor layout as full screen & giving transition also
         imageViewController.modalPresentationStyle = .fullScreen
         imageViewController.modalTransitionStyle = .crossDissolve
         
