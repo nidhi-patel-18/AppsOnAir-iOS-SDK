@@ -67,7 +67,7 @@ class FeedbackController: UIViewController {
     
     let ticketType = ["Improvement suggestion", "Bug report"]
     var selectedImage: [UIImage]? = []
-
+    
     
     //MARK: - View Methods
     override func viewDidLoad() {
@@ -159,7 +159,7 @@ class FeedbackController: UIViewController {
         
         view.endEditing(true)
         dismiss(animated: true, completion: nil)
-        
+        isFeedbackInProgress = false
     }
     
     @objc func removeSanpshot(_ sender: UIButton) {
@@ -175,6 +175,7 @@ class FeedbackController: UIViewController {
                 self.dismiss(animated: true, completion: nil)
                 let deviceInfo = MyDevice().getInfo()
                 print("deviceInfo: \(deviceInfo)")
+                isFeedbackInProgress = false
             }
         }
     

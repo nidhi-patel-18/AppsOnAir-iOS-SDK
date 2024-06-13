@@ -12,6 +12,8 @@ import Toast_Swift
 import ZLImageEditor
 
 
+
+//Image Editor layout handling
 struct ZLImageEditorLayout {
     static let bottomToolBtnH: CGFloat = 34
     
@@ -23,31 +25,13 @@ struct ZLImageEditorLayout {
 
 
 
-
 // MARK: - EXTENSION UIViewController
 typealias ToastCompletionHandler = (_ success:Bool) -> Void
-var isFeedbackInProgress = false
+typealias feedbackCompleteionHandler = (_ success:Bool) -> Void
+public var  isFeedbackInProgress = false
 var screenshot: UIImage?
 
 
-
-//class CustomZLEditImageViewController: ZLEditImageViewController {
-//
-//    override var cancelBtn: ZLEnlargeButton {
-//        let btn = ZLEnlargeButton(type: .custom)
-//        btn.titleLabel?.font = ZLImageEditorLayout.bottomToolTitleFont
-//        btn.setTitleColor(.white, for: .normal)
-//        btn.setTitle("cancel", for: .normal)
-//        btn.addTarget(self, action: #selector(cancelButtonClick), for: .touchUpInside)
-//        btn.enlargeInset = 30
-//        return btn
-//    }
-//    
-//    @objc func cancelButtonClick() {
-//        isFeedbackInProgress = false
-//        dismiss(animated: true, completion: nil)
-//    }
-//}
 
 extension UIViewController {
     
@@ -64,16 +48,16 @@ extension UIViewController {
         
     }()
     
-  
+    
     @objc func swizzled_viewDidLoad() {
         self.swizzled_viewDidLoad()
         setupMotionDetection()
     }
     
     @objc func swizzled_dealloc() {
-           // Clean up resources here if needed
-           self.swizzled_dealloc()
-       }
+        // Clean up resources here if needed
+        self.swizzled_dealloc()
+    }
     
     func setupMotionDetection() {
         // Set the view controller to become the first responder
@@ -83,80 +67,134 @@ extension UIViewController {
         // Add motion detection
         let motionManager = CMMotionManager()
         motionManager.startAccelerometerUpdates()
-    
+        
     }
-   
+ 
     open override func motionEnded(_ motion: UIEvent.EventSubtype, with event: UIEvent?) {
-       
+        
+        
+        if motion == .motionShake {
+            print("Shake Gesture Detected")
+            print("feedback progress ===> \(isFeedbackInProgress)")
             
-            
-            if motion == .motionShake {
-                print("Shake Gesture Detected")
-                print("feedback progress ===> \(isFeedbackInProgress)")
-
-                guard !isFeedbackInProgress else {
-                    return
-                }
-                isFeedbackInProgress = true
-                
-                if let captureImage = UIApplication.shared.windows.first?.takeScreenshot() {
-                    // Do something with the screenshot, like saving it to the photo library
-                    // UIImageWriteToSavedPhotosAlbum(screenshot, nil, nil, nil)
-                    screenshot = captureImage
-                }
-           
-                ZLImageEditorConfiguration.default()
-                    .editImageTools([.draw, .clip, .textSticker])
-                    .adjustTools([.brightness, .contrast, .saturation])
-          
-                
-
-            
-                ZLEditImageViewController.showEditImageVC(parentVC: self, image: screenshot ?? UIImage()) { image, Editmodel in
-                    print("feedback progress 1===> \(isFeedbackInProgress)")
-                    isFeedbackInProgress = false
-                    screenshot = image
-                    print("feedback progress 2===> \(isFeedbackInProgress)")
-                    // let bundle = Bundle(for: type(of: self))
-                    let bundle = Bundle(identifier: "org.cocoapods.AppsOnAir")
-                    let storyboard = UIStoryboard(name: "Feedback", bundle: bundle)
-                    let Vc = storyboard.instantiateViewController(withIdentifier: "FeedbackController") as? FeedbackController
-                    print("feedback progress 3===> \(isFeedbackInProgress)")
-                    Vc?.selectedImage = [screenshot ?? UIImage()]
-                    
-                    Vc?.navBarColor = AppsOnAirServices.shared.navBarColor
-                    Vc?.navBarTitle = AppsOnAirServices.shared.navBarTitle
-                    Vc?.navBarTitleTextColor = AppsOnAirServices.shared.navBarTitleTextColor
-                    print("feedback progress 4===> \(isFeedbackInProgress)")
-                    Vc?.backgroundColor = AppsOnAirServices.shared.backgroundColor
-                    
-                    Vc?.labelTextColor = AppsOnAirServices.shared.labelTextColor
-                    Vc?.inputHintTextColor = AppsOnAirServices.shared.inputHintTextColor
-                    Vc?.backgroundColor = AppsOnAirServices.shared.backgroundColor
-                    print("feedback progress 5===> \(isFeedbackInProgress)")
-                    Vc?.labelTextColor = AppsOnAirServices.shared.labelTextColor
-                    Vc?.inputHintTextColor = AppsOnAirServices.shared.inputHintTextColor
-                    
-                    print("feedback progress 6===> \(isFeedbackInProgress)")
-                    Vc?.txtDescriptionCharLimit = AppsOnAirServices.shared.txtDescriptionCharLimit ?? 255
-                    Vc?.txtDescriptionHintText = AppsOnAirServices.shared.txtDescriptionHintText
-                    
-                    Vc?.txtEmailHintText = AppsOnAirServices.shared.txtEmailHintText
-                    print("feedback progress 8===> \(isFeedbackInProgress)")
-                    Vc?.btnSubmitText = AppsOnAirServices.shared.btnSubmitText
-                    Vc?.btnSubmitTextColor = AppsOnAirServices.shared.btnSubmitTextColor
-                    Vc?.btnSubmitBackgroundColor = AppsOnAirServices.shared.btnSubmitBackgroundColor
-                    
-                    print("feedback progress 9===> \(isFeedbackInProgress)")
-                    self.presentScreenFromTop(Vc ?? UIViewController())
-                    print("end feedback progress ===> \(isFeedbackInProgress)")
-                }
+            handleShake()
+    
+        }
+    }
+    
+    
+    //calling when shaking the device
+    private func handleShake() {
+        guard !isFeedbackInProgress else {
+                return
             }
+        openImageEditor()
+        isFeedbackInProgress = true
+    }
+    
+    
+    //open image editor on shake gaeture
+    func openImageEditor(){
+        if let captureImage = UIApplication.shared.windows.first?.takeScreenshot() {
+            // Do something with the screenshot, like saving it to the photo library
+            // UIImageWriteToSavedPhotosAlbum(screenshot, nil, nil, nil)
+            screenshot = captureImage
+        }
+        ZLImageEditorConfiguration.default()
+            .editImageTools([.draw, .clip, .textSticker])
+            .adjustTools([.brightness, .contrast, .saturation])
+        
+        let imageViewController = ZLEditImageViewController(image: screenshot ?? UIImage())
+        
+        
+        //image editing handling
+        imageViewController.editFinishBlock = { image, Editmodel in
+            screenshot = image
+            
+            // let bundle = Bundle(for: type(of: self))
+            let bundle = Bundle(identifier: "org.cocoapods.AppsOnAir")
+            let storyboard = UIStoryboard(name: "Feedback", bundle: bundle)
+            let Vc = storyboard.instantiateViewController(withIdentifier: "FeedbackController") as? FeedbackController
+            Vc?.selectedImage = [screenshot ?? UIImage()]
+            
+            Vc?.navBarColor = AppsOnAirServices.shared.navBarColor
+            Vc?.navBarTitle = AppsOnAirServices.shared.navBarTitle
+            Vc?.navBarTitleTextColor = AppsOnAirServices.shared.navBarTitleTextColor
+            Vc?.backgroundColor = AppsOnAirServices.shared.backgroundColor
+            
+            Vc?.labelTextColor = AppsOnAirServices.shared.labelTextColor
+            Vc?.inputHintTextColor = AppsOnAirServices.shared.inputHintTextColor
+            Vc?.backgroundColor = AppsOnAirServices.shared.backgroundColor
+            Vc?.labelTextColor = AppsOnAirServices.shared.labelTextColor
+            Vc?.inputHintTextColor = AppsOnAirServices.shared.inputHintTextColor
+            
+            Vc?.txtDescriptionCharLimit = AppsOnAirServices.shared.txtDescriptionCharLimit ?? 255
+            Vc?.txtDescriptionHintText = AppsOnAirServices.shared.txtDescriptionHintText
+            
+            Vc?.txtEmailHintText = AppsOnAirServices.shared.txtEmailHintText
+            Vc?.btnSubmitText = AppsOnAirServices.shared.btnSubmitText
+            Vc?.btnSubmitTextColor = AppsOnAirServices.shared.btnSubmitTextColor
+            Vc?.btnSubmitBackgroundColor = AppsOnAirServices.shared.btnSubmitBackgroundColor
+            self.presentScreenFromTop(Vc ?? UIViewController())
+//            isFeedbackInProgress = false
+        }
+        
+        
+        imageViewController.modalPresentationStyle = .fullScreen
+        imageViewController.modalTransitionStyle = .crossDissolve
+        
+        //cancel button UI handling
+        imageViewController.cancelBtn = ZLEnlargeButton(type: .custom)
+        imageViewController.cancelBtn.titleLabel?.font = ZLImageEditorLayout.bottomToolTitleFont
+        imageViewController.cancelBtn.setTitleColor(.white, for: .normal)
+        imageViewController.cancelBtn.setTitle("Cancel", for: .normal)
+        imageViewController.cancelBtn.addTarget(self, action: #selector(cancelBtnClick), for: .touchUpInside)
+        imageViewController.cancelBtn.enlargeInset = 30
+
+        present(imageViewController,animated: true, completion: nil)
+        
+//        ZLEditImageViewController.showEditImageVC(parentVC: self, image: screenshot ?? UIImage()) { image, Editmodel in
+//            
+//            screenshot = image
+//            
+//            // let bundle = Bundle(for: type(of: self))
+//            let bundle = Bundle(identifier: "org.cocoapods.AppsOnAir")
+//            let storyboard = UIStoryboard(name: "Feedback", bundle: bundle)
+//            let Vc = storyboard.instantiateViewController(withIdentifier: "FeedbackController") as? FeedbackController
+//            Vc?.selectedImage = [screenshot ?? UIImage()]
+//            
+//            Vc?.navBarColor = AppsOnAirServices.shared.navBarColor
+//            Vc?.navBarTitle = AppsOnAirServices.shared.navBarTitle
+//            Vc?.navBarTitleTextColor = AppsOnAirServices.shared.navBarTitleTextColor
+//            Vc?.backgroundColor = AppsOnAirServices.shared.backgroundColor
+//            
+//            Vc?.labelTextColor = AppsOnAirServices.shared.labelTextColor
+//            Vc?.inputHintTextColor = AppsOnAirServices.shared.inputHintTextColor
+//            Vc?.backgroundColor = AppsOnAirServices.shared.backgroundColor
+//            Vc?.labelTextColor = AppsOnAirServices.shared.labelTextColor
+//            Vc?.inputHintTextColor = AppsOnAirServices.shared.inputHintTextColor
+//            
+//            Vc?.txtDescriptionCharLimit = AppsOnAirServices.shared.txtDescriptionCharLimit ?? 255
+//            Vc?.txtDescriptionHintText = AppsOnAirServices.shared.txtDescriptionHintText
+//            
+//            Vc?.txtEmailHintText = AppsOnAirServices.shared.txtEmailHintText
+//            Vc?.btnSubmitText = AppsOnAirServices.shared.btnSubmitText
+//            Vc?.btnSubmitTextColor = AppsOnAirServices.shared.btnSubmitTextColor
+//            Vc?.btnSubmitBackgroundColor = AppsOnAirServices.shared.btnSubmitBackgroundColor
+//            self.presentScreenFromTop(Vc ?? UIViewController())
+//            isFeedbackInProgress = false
+//        }
+
+    }
+    
+    @objc func cancelBtnClick() {
+        dismiss(animated: true, completion: nil)
+        isFeedbackInProgress = false
     }
     
     func presentScreenFromTop(_ viewController: UIViewController, animated: Bool = true, completion: (() -> Void)? = nil) {
         viewController.modalPresentationStyle = .overFullScreen // or .overCurrentContext
-    
+        
         DispatchQueue.main.async { [weak self] in
             self?.present(viewController, animated: animated, completion: completion)
         }
@@ -170,11 +208,13 @@ extension UIViewController {
         })
         
     }
+    
 }
+
 
 // MARK: - EXTENSION UIView
 extension UIView {
-    /*===================================================
+    /*===================================================`
      * function Purpose: CAPTURE SNAPSHOT OF SCREEN
      ===================================================*/
     ///capture screen snapshot
