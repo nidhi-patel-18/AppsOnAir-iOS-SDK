@@ -125,7 +125,6 @@ class FeedbackController: UIViewController {
             // self.txtEmail.isEnabled = false
             // self.txtEmail.isUserInteractionEnabled = false
             
-            
             let layout = UICollectionViewFlowLayout()
             layout.scrollDirection = .horizontal
             
@@ -138,6 +137,7 @@ class FeedbackController: UIViewController {
            // let bundle = Bundle(for: type(of: self))
             let bundle = Bundle(identifier: "org.cocoapods.AppsOnAir")
             clView?.register(UINib(nibName: "imageViewCell", bundle: bundle), forCellWithReuseIdentifier: "imageViewCell")
+            clView?.register(UINib(nibName: "AddImageViewCell", bundle: bundle), forCellWithReuseIdentifier: "AddImageViewCell")
             
             clView.delegate = self
             clView.dataSource = self
@@ -150,8 +150,6 @@ class FeedbackController: UIViewController {
             btnSubmit.addShadow()
             btnSubmit.addCorrnerRaduis(color: sColorClear, raduis: raduis)
             btnSubmit.addTarget(self, action: #selector(btnSubmit(_:)), for: .touchUpInside)
-            
-        
    }
     
     //MARK: - Action Methods
@@ -181,37 +179,55 @@ class FeedbackController: UIViewController {
     
         
     }
+    
+    @objc func btnAddImage(_ sender: UIButton){
+        self.presentActionSheet()
+        
+    }
 }
 
 //MARK: - UICollectionDelegate
 extension FeedbackController:  UICollectionViewDelegate, UICollectionViewDataSource,UICollectionViewDelegateFlowLayout {
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return self.selectedImage?.count ?? 0
+        return if selectedImage?.isEmpty ?? false {
+            1
+        }else{
+           if selectedImage?.count ?? 0 == 1 {
+                2
+           }else{
+               selectedImage?.count ?? 0
+           }
+        }
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        
-        let inx = indexPath.row
-        
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "imageViewCell", for: indexPath) as? imageViewCell
-        
-        cell?.imageView.image = selectedImage?[inx]
-        cell?.imageView.layer.masksToBounds = true
-        cell?.imageView.contentMode = .scaleAspectFit
-        cell?.imageView.clipsToBounds = true
+        let inx = indexPath.item
+        if indexPath.item < selectedImage?.count ?? 0{
+            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "imageViewCell", for: indexPath) as? imageViewCell
+            cell?.imageView.image = selectedImage?[inx]
+            cell?.imageView.layer.masksToBounds = true
+            cell?.imageView.contentMode = .scaleAspectFit
+            cell?.imageView.clipsToBounds = true
+            
+            cell?.bgImageView.layer.masksToBounds = true
+            cell?.bgImageView.clipsToBounds = true
+            cell?.bgImageView.backgroundColor = sColorWhite
+            cell?.bgImageView.addShadows(shadowColor: sColorGray.cgColor, shadowOffset: CGSize(width: 4, height: 2), shadowOpacity: 0.9, shadowRadius: 6, cornerRadiusIs: 6)
+            cell?.btnRemove.tag = inx
+            cell?.btnRemove.addTarget(self, action: #selector(removeSanpshot(_:)), for: .touchUpInside)
 
-        cell?.bgImageView.layer.masksToBounds = true
-        cell?.bgImageView.clipsToBounds = true
-        cell?.bgImageView.backgroundColor = sColorWhite
-        cell?.bgImageView.addShadows(shadowColor: sColorGray.cgColor, shadowOffset: CGSize(width: 4, height: 2), shadowOpacity: 0.9, shadowRadius: 6, cornerRadiusIs: 6)
+            return cell ?? UICollectionViewCell()
+            
+        }else{
+            let addCell = collectionView.dequeueReusableCell(withReuseIdentifier: "AddImageViewCell", for: indexPath) as? AddImageViewCell
+            addCell?.btnAdd.addTarget(self, action: #selector(btnAddImage(_:)), for: .touchUpInside)
+            return addCell ?? UICollectionViewCell()
+            
+        }
         
-        
-        cell?.btnRemove.tag = inx
-        cell?.btnRemove.addTarget(self, action: #selector(removeSanpshot(_:)), for: .touchUpInside)
-        
-        return cell ?? UICollectionViewCell()
     }
+    
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         return CGSize(width: ((screenWidth) - 16) / 4, height: ((screenWidth) - 16) / 4)
@@ -221,7 +237,7 @@ extension FeedbackController:  UICollectionViewDelegate, UICollectionViewDataSou
     
 }
 //MARK: - UITextViewDelegate
-extension FeedbackController: UITextViewDelegate {
+extension FeedbackController: UITextViewDelegate  {
     func textViewDidBeginEditing(_ textView: UITextView) {
 
         if txtDescirption.textColor == UIColor.lightGray {
@@ -245,4 +261,58 @@ extension FeedbackController: UITextViewDelegate {
         lblDescirptionChars.text = "\(numberOfChars)/\(txtDescriptionCharLimit)"
         return numberOfChars < txtDescriptionCharLimit;
     }
+}
+
+
+
+//MARK: - UIImagePickerControllerDelegate,UINavigationControllerDelegate
+extension FeedbackController: UIImagePickerControllerDelegate, UINavigationControllerDelegate {
+    func presentActionSheet() {
+            let actionSheet = UIAlertController(title: "Add Image",
+                                                message: "How would you like to select a picture",
+                                                preferredStyle: .actionSheet)
+            actionSheet.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
+//            actionSheet.addAction(UIAlertAction(title: "Take Photo",
+//                                                style: .default,
+//                                                handler: { [weak self] _ in
+//                self?.presentCamera()
+//            }))
+            actionSheet.addAction(UIAlertAction(title: "Choose Photo",
+                                                style: .default,
+                                                handler: { [weak self] _ in
+                self?.presentPhotoLibrary()
+            }))
+            present(actionSheet, animated: true)
+        }
+    
+//    func presentCamera() {
+//            let vc = UIImagePickerController()
+//            vc.sourceType = .camera
+//            vc.allowsEditing = true
+//            vc.delegate = self
+//            present(vc, animated: true)
+//        }
+        
+        func presentPhotoLibrary() {
+            let vc = UIImagePickerController()
+            vc.sourceType = .photoLibrary
+            vc.allowsEditing = true
+            vc.delegate = self
+            present(vc, animated: true)
+        }
+        
+        func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
+            guard let currentSelectedImage = info[UIImagePickerController.InfoKey.editedImage] as? UIImage else {
+                return
+            }
+            picker.dismiss(animated: true, completion: nil)
+            self.selectedImage?.append(currentSelectedImage)
+            clView.reloadData()
+        }
+        
+        func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
+            picker.dismiss(animated: true, completion: nil)
+        }
+    
+    
 }

@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="22505" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+    <device id="retina6_12" orientation="portrait" appearance="light"/>
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="22504"/>
+        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="System colors in document resources" minToolsVersion="11.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" restorationIdentifier="AddImageViewCell" reuseIdentifier="AddImageViewCell" id="C5B-sb-x3V" userLabel="AddImageViewCell" customClass="AddImageViewCell" customModule="AppsOnAir" customModuleProvider="target">
+            <rect key="frame" x="0.0" y="0.0" width="150" height="165"/>
+            <autoresizingMask key="autoresizingMask"/>
+            <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center">
+                <rect key="frame" x="0.0" y="0.0" width="150" height="165"/>
+                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                <subviews>
+                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="kwp-ZE-4VM">
+                        <rect key="frame" x="8" y="8" width="134" height="149"/>
+                        <subviews>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="qkf-jh-rGo">
+                                <rect key="frame" x="47" y="54.666666666666657" width="40" height="40"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="40" id="cOA-mJ-zor"/>
+                                    <constraint firstAttribute="height" constant="40" id="r6f-Qr-xAu"/>
+                                </constraints>
+                                <state key="normal" title="Button"/>
+                                <buttonConfiguration key="configuration" style="gray" image="plus" catalog="system"/>
+                            </button>
+                        </subviews>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                        <constraints>
+                            <constraint firstItem="qkf-jh-rGo" firstAttribute="centerY" secondItem="kwp-ZE-4VM" secondAttribute="centerY" id="JHL-V9-Yi6"/>
+                            <constraint firstItem="qkf-jh-rGo" firstAttribute="centerX" secondItem="kwp-ZE-4VM" secondAttribute="centerX" id="qdt-Oy-dV7"/>
+                        </constraints>
+                    </view>
+                </subviews>
+            </view>
+            <viewLayoutGuide key="safeArea" id="NBa-dR-39F"/>
+            <constraints>
+                <constraint firstAttribute="bottom" secondItem="kwp-ZE-4VM" secondAttribute="bottom" constant="8" id="Ecb-JX-N2P"/>
+                <constraint firstAttribute="trailing" secondItem="kwp-ZE-4VM" secondAttribute="trailing" constant="8" id="hMV-kY-1iV"/>
+                <constraint firstItem="kwp-ZE-4VM" firstAttribute="top" secondItem="C5B-sb-x3V" secondAttribute="top" constant="8" id="oNu-hw-LoB"/>
+                <constraint firstItem="kwp-ZE-4VM" firstAttribute="leading" secondItem="C5B-sb-x3V" secondAttribute="leading" constant="8" id="z6c-Hf-ee2"/>
+            </constraints>
+            <size key="customSize" width="150" height="165"/>
+            <connections>
+                <outlet property="bgImageView" destination="kwp-ZE-4VM" id="NKp-V6-Zh4"/>
+                <outlet property="btnAdd" destination="qkf-jh-rGo" id="pQd-xj-bzh"/>
+            </connections>
+            <point key="canvasLocation" x="215.26717557251908" y="60.211267605633807"/>
+        </collectionViewCell>
+    </objects>
+    <resources>
+        <image name="plus" catalog="system" width="128" height="113"/>
+        <systemColor name="systemBackgroundColor">
+            <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+        </systemColor>
+    </resources>
+</document>
